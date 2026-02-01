@@ -3,227 +3,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharma.Duck 簡報截圖產生器</title>
+    <title>大樹健康購物網 - Pharma.Duck 智慧導購示範</title>
     <style>
-        /* --- 簡報視覺優化設定 --- */
-        body { font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif; background: #f0f0f0; margin: 0; display: flex; justify-content: center; background-color: #333; }
+        /* 基礎設定 */
+        :root {
+            --greattree-green: #009944;
+            --greattree-orange: #F39800;
+            --bg-gray: #f5f5f5;
+        }
+        body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; padding: 0; background-color: var(--bg-gray); }
         
-        /* 手機/網頁 模擬外框 */
-        .device-frame {
-            width: 420px; /* 模擬手機寬度，適合展示對話 */
-            height: 800px;
+        /* 模擬導航列 (Logo 修改處) */
+        header { background: white; padding: 10px 0; border-bottom: 3px solid var(--greattree-green); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+        
+        /* 修改：Logo 區塊現在包含圖片 */
+        .logo { display: flex; align-items: center; }
+        .logo img { height: 50px; width: auto; } /* 設定 Logo 高度 */
+
+        .search-bar { flex-grow: 1; margin: 0 40px; display: flex; }
+        .search-bar input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; outline: none;}
+        .search-bar button { padding: 10px 20px; background: var(--greattree-green); color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; }
+        .nav-links { font-size: 14px; color: #666; }
+
+        /* 商品列表模擬 */
+        .main-content { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .banner { width: 100%; height: 300px; background: linear-gradient(to right, #e0e0e0, #f0f0f0); border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; color: #888; font-size: 24px; font-weight: bold;}
+        .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .product-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; position: relative; border: 2px solid transparent;}
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .tag-rec { position: absolute; top: -2px; right: -2px; background: var(--greattree-orange); color: white; padding: 4px 12px; font-size: 12px; border-radius: 0 8px 0 8px; display: none; z-index: 2; font-weight: bold;}
+        .p-img { height: 150px; background: #eee; margin-bottom: 10px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #aaa; }
+        .p-name { font-weight: bold; margin-bottom: 5px; height: 40px; overflow: hidden; font-size: 15px;}
+        .p-price { color: #d0021b; font-weight: bold; font-size: 18px; }
+
+        /* 修改：右下角大型導購鴨鴨 (取代原本的圓形按鈕) */
+        .duck-assistant-large {
+            position: fixed;
+            bottom: 0px; /* 貼底站立 */
+            right: 20px;
+            width: 220px; /* 設定寬度，讓它看起來夠大 */
+            height: auto;
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        /* 滑鼠移過去時稍微浮起 */
+        .duck-assistant-large:hover {
+            transform: translateY(-10px);
+        }
+        .duck-assistant-large img {
+            width: 100%;
+            height: auto;
+            display: block;
+            /* 加上陰影增加立體感 */
+            filter: drop-shadow(2px 5px 15px rgba(0,0,0,0.3));
+        }
+
+        /* Pharma.Duck 對話視窗 */
+        .duck-chat-window {
+            position: fixed;
+            bottom: 200px; /* 調整視窗位置，避免擋住大鴨鴨 */
+            right: 50px;
+            width: 350px;
+            height: 500px;
             background: white;
-            position: relative;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none; /* 預設隱藏 */
+            flex-direction: column;
+            z-index: 1001; /* 比鴨子更高一層 */
             overflow: hidden;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            margin-top: 20px;
+            border: 1px solid #ddd;
         }
+        
+        /* 聊天視窗頭部 */
+        .chat-header {
+            background: var(--greattree-green); color: white; padding: 15px; display: flex; align-items: center;
+        }
+        .chat-header-img { width: 40px; height: 40px; background: white; border-radius: 50%; margin-right: 10px; overflow: hidden; border: 2px solid var(--greattree-orange);}
+        .chat-header-img img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 頂部導航列 */
-        .header { background: #fff; padding: 15px; border-bottom: 4px solid #009944; display: flex; align-items: center; justify-content: space-between; }
-        .logo { font-weight: bold; color: #009944; font-size: 18px; display: flex; align-items: center; gap: 5px; }
-        
-        /* === 場景 1: 對話介面 === */
-        #scene-chat { display: block; height: 100%; display: flex; flex-direction: column; background: #f9f9f9; }
-        .chat-area { flex: 1; padding: 20px; overflow-y: auto; }
-        
-        .msg { margin-bottom: 20px; display: flex; flex-direction: column; }
-        .msg.user { align-items: flex-end; }
-        .msg.duck { align-items: flex-start; }
-        
-        .bubble {
-            max-width: 85%;
+        /* 聊天內容區 */
+        .chat-messages {
+            flex-grow: 1;
             padding: 15px;
-            border-radius: 15px;
-            font-size: 15px;
-            line-height: 1.6;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            background: #fafafa;
         }
-        .user .bubble { background: #009944; color: white; border-bottom-right-radius: 2px; }
-        .duck .bubble { background: white; border: 1px solid #ddd; border-bottom-left-radius: 2px; }
-
-        .duck-avatar-small { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #F39800; background: #fff; overflow: hidden; margin-bottom: 5px; }
-        .duck-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* 推薦卡片樣式 */
+        .msg { margin-bottom: 12px; max-width: 85%; line-height: 1.4; font-size: 14px; }
+        .msg-duck { align-self: flex-start; }
+        .msg-duck .bubble { background: white; padding: 12px 16px; border-radius: 18px 18px 18px 4px; border: 1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .msg-user { align-self: flex-end; margin-left: auto; text-align: right; }
+        .msg-user .bubble { background: var(--greattree-green); color: white; padding: 10px 14px; border-radius: 18px 18px 4px 18px; display: inline-block; }
+        
+        /* 推薦商品卡片 (在對話中) */
         .rec-card {
-            background: #fff;
-            border: 2px solid #F39800;
-            border-radius: 10px;
+            background: white;
+            border: 2px solid var(--greattree-orange);
+            border-radius: 8px;
             padding: 10px;
             margin-top: 10px;
             display: flex;
             gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .rec-img { width: 60px; height: 60px; background: #e0e0e0; border-radius: 5px; }
-        .rec-content h4 { margin: 0 0 5px 0; color: #009944; font-size: 14px; }
-        .rec-content p { margin: 0; font-size: 12px; color: #666; }
+        .rec-card:hover { background: #fffbe6; }
+        .rec-card img { width: 60px; height: 60px; background: #ddd; object-fit: cover; border-radius: 4px;}
+        .rec-info { flex-grow: 1; }
+        .rec-title { font-weight: bold; font-size: 14px; color: var(--greattree-green); }
+        .rec-reason { font-size: 12px; color: #666; margin-top: 4px; line-height: 1.3; }
+        .rec-action { margin-top: 8px; font-size: 12px; color: var(--greattree-orange); font-weight: bold; text-align: right;}
 
-        /* 輸入框模擬 */
-        .input-area { background: white; padding: 15px; border-top: 1px solid #ddd; display: flex; gap: 10px; align-items: center; }
-        .fake-input { flex: 1; height: 35px; background: #f0f0f0; border-radius: 20px; padding: 0 15px; display: flex; align-items: center; color: #aaa; font-size: 14px; }
-        .send-btn { width: 35px; height: 35px; background: #009944; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
-
-        /* === 場景 2: 結帳頁面 === */
-        #scene-checkout { display: none; height: 100%; background: #fff; position: relative; }
-        .checkout-content { padding: 20px; }
-        .cart-title { font-size: 18px; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
-        
-        .product-row { display: flex; gap: 15px; margin-bottom: 20px; }
-        .p-img { width: 80px; height: 80px; background: #e6f5ea; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #009944; text-align: center;}
-        .p-info { flex: 1; }
-        .p-name { font-size: 14px; font-weight: bold; line-height: 1.4; margin-bottom: 5px; }
-        .p-price { color: #d0021b; font-weight: bold; font-size: 16px; margin-top: 5px; }
-
-        .total-bar { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; text-align: right; }
-        .big-price { font-size: 24px; color: #d0021b; font-weight: bold; }
-        .btn-pay { width: 100%; background: #009944; color: white; padding: 15px; text-align: center; font-weight: bold; border-radius: 5px; margin-top: 20px; font-size: 18px; }
-
-        /* 鴨子攔截圖 */
-        .duck-overlay {
-            position: absolute;
-            bottom: 100px;
-            right: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            z-index: 10;
-        }
-        .hand-bubble {
+        /* 輸入區 */
+        .chat-input-area {
+            padding: 10px;
             background: white;
-            border: 3px solid #000;
-            border-radius: 20px 20px 0 20px;
-            padding: 15px;
-            margin-bottom: -10px;
-            margin-right: 20px;
-            font-family: "Comic Sans MS", cursive; /* 手寫風 */
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 2;
-            max-width: 150px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
         }
-        .duck-img-large {
-            width: 150px;
-            position: relative;
-            z-index: 1;
+        .chat-input-area input {
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 10px 15px;
+            outline: none;
+        }
+        .chat-input-area button {
+            background: var(--greattree-orange);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
         }
 
-        /* --- 控制面板 (截圖時不會被拍到，如果用全螢幕截圖請小心) --- */
-        .controls {
-            position: fixed; top: 20px; left: 20px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); width: 200px;
-        }
-        .controls button {
-            display: block; width: 100%; padding: 10px; margin-bottom: 10px; cursor: pointer; border: none; background: #ddd; font-weight: bold; border-radius: 5px;
-        }
-        .controls button:hover { background: #ccc; }
-        .controls h3 { margin-top: 0; font-size: 16px; }
-        .note { font-size: 12px; color: #666; margin-top: 10px; }
+        .typing { font-size: 12px; color: #888; margin-left: 15px; margin-bottom: 10px; display: none; font-style: italic;}
     </style>
 </head>
 <body>
 
-    <div class="controls">
-        <h3>📸 截圖控制台</h3>
-        <button onclick="showScene('chat')">1. 顯示：導購對話</button>
-        <button onclick="showScene('checkout')">2. 顯示：結帳攔截</button>
-        <div class="note">提示：請確認 my_duck.png 已放入資料夾。使用系統截圖工具擷取中間白色手機畫面。</div>
+<header>
+    <div class="nav-container">
+        <div class="logo">
+            <img src="https://www.greattree.com.tw/images/logo.png" alt="大樹藥局 Logo">
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="搜尋商品、品牌或輸入症狀 (Demo版)...">
+            <button>搜尋</button>
+        </div>
+        <div class="nav-links">會員登入 | 購物車(0) | 門市查詢</div>
+    </div>
+</header>
+
+<div class="main-content">
+    <div class="banner">🎉 Pharma.Duck 小鴨藥師 全新上線！</div>
+    <h2 style="color: #333;">熱門保健品</h2>
+    <div class="product-grid" id="productGrid">
+        </div>
+</div>
+
+<div class="duck-assistant-large" onclick="toggleChat()">
+    <img src="my_duck.png" alt="Ph.D 鴨鴨導購">
+</div>
+
+<div class="duck-chat-window" id="chatWindow">
+    <div class="chat-header">
+        <div class="chat-header-img">
+            <img src="my_duck.png" alt="鴨">
+        </div>
+        <div style="font-weight: bold;">Ph.D 鴨子藥師 (線上諮詢)</div>
+        <div style="margin-left: auto; cursor: pointer; font-size: 20px;" onclick="toggleChat()">✕</div>
     </div>
 
-    <div class="device-frame">
-        
-        <div class="header">
-            <div class="logo">🌳 大樹健康購物網</div>
-            <div style="font-size: 20px;">☰</div>
+    <div class="chat-messages" id="chatMsg">
+        <div class="msg msg-duck">
+            <div class="bubble">您好！我是您的專屬健康顧問 Ph.D 鴨鴨。🦆<br>今天想找什麼方面的保健品呢？我可以幫您比較成分喔！✨</div>
         </div>
-
-        <div id="scene-chat">
-            <div class="chat-area">
-                <div class="msg user">
-                    <div class="bubble">你好，我有位70歲的阿嬤，她有風濕性關節炎，請問他可以吃著麼保健品?</div>
-                </div>
-
-                <div class="msg duck">
-                    <div class="duck-avatar-small"><img src="my_duck.png" alt="鴨"></div>
-                    <div class="bubble">
-                        收到！針對阿嬤的狀況，<b>「抗發炎」</b>是關鍵喔！🦆<br><br>
-                        建議選擇含有 <b>UC-II</b> 或 <b>高濃度魚油</b> 的產品，能幫助舒緩不適。
-                        <div class="rec-card">
-                            <div class="rec-img" style="background:#b3e5fc; display:flex; align-items:center; justify-content:center; font-size:10px;">商品圖</div>
-                            <div class="rec-content">
-                                <h4>大樹嚴選深海魚油</h4>
-                                <p>高濃度 Omega-3 幫助抗發炎</p>
-                                <p style="color:#d0021b; font-weight:bold; margin-top:3px;">$1,200</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="msg duck">
-                    <div class="duck-avatar-small"><img src="my_duck.png" alt="鴨"></div>
-                    <div class="bubble">
-                        如果疼痛比較嚴重，建議也可以先帶阿嬤到門市，由藥師評估使用這款外用凝膠來緩解喔！(點擊查看門市地圖)
-                    </div>
-                </div>
-
-            </div>
-            <div class="input-area">
-                <div class="fake-input">請輸入您的症狀...</div>
-                <div class="send-btn">➤</div>
-            </div>
-        </div>
-
-        <div id="scene-checkout">
-            <div class="checkout-content">
-                <div class="cart-title">🛒 購物清單</div>
-                
-                <div class="product-row">
-                    <div class="p-img">潔顏<br>慕斯</div>
-                    <div class="p-info">
-                        <div class="p-name">【Pharmaceris】A益生菌舒緩潔顏慕斯 (150ml)</div>
-                        <div style="color:#888; font-size:12px;">規格：單一規格</div>
-                        <div class="p-price">$650</div>
-                    </div>
-                </div>
-
-                <div class="total-bar">
-                    <div>共 1 件商品</div>
-                    <div class="big-price">總計 $650</div>
-                </div>
-
-                <div class="btn-pay">立即結帳</div>
-
-                <div class="duck-overlay">
-                    <div class="hand-bubble">
-                        看看這些鴨！<br>
-                        <span style="font-size:12px; font-weight:normal;">買這個的人也帶了...</span>
-                        <div style="margin-top:5px; border-top:1px dashed #000; padding-top:5px; font-size:12px;">
-                            👉 <span style="color:#d0021b;">加購保濕乳 -$50</span>
-                        </div>
-                    </div>
-                    <img src="my_duck.png" class="duck-img-large" alt="Pharma.Duck">
-                </div>
-            </div>
-        </div>
-
     </div>
+    
+    <div class="typing" id="typingIndicator">鴨鴨正在思考中... 🤔</div>
 
-    <script>
-        function showScene(sceneName) {
-            document.getElementById('scene-chat').style.display = 'none';
-            document.getElementById('scene-checkout').style.display = 'none';
-            
-            if(sceneName === 'chat') {
-                document.getElementById('scene-chat').style.display = 'flex';
-            } else {
-                document.getElementById('scene-checkout').style.display = 'block';
-            }
+    <div class="chat-input-area">
+        <input type="text" id="userInput" placeholder="輸入症狀，例：奶奶膝蓋痛..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">➤</button>
+    </div>
+</div>
+
+<script>
+    // 模擬商品資料庫
+    const products = [
+        { id: 1, name: "大樹特選 深海魚油 1000mg", price: 1200, tag: "心血管/關節", imgColor: "#a3d1ff" },
+        { id: 2, name: "挺立 關鍵迷你錠 UC-II", price: 1580, tag: "關節保養", imgColor: "#ffcdd2" },
+        { id: 3, name: "桂格 完膳營養素 (原味)", price: 650, tag: "成人營養", imgColor: "#e1bee7" },
+        { id: 4, name: "善存 銀寶綜合維他命", price: 880, tag: "長輩維他命", imgColor: "#fff9c4" },
+        { id: 5, name: "萊萃美 葉黃素膠囊", price: 900, tag: "視力保健", imgColor: "#c8e6c9" },
+        { id: 6, name: "合利他命 Ex Plus", price: 1800, tag: "B群/痠痛", imgColor: "#ffecb3" },
+        { id: 7, name: "大樹 葡萄糖胺飲", price: 600, tag: "關節保養", imgColor: "#b2dfdb" },
+        { id: 8, name: "普拿疼 止痛藥 (乙醯胺酚)", price: 150, tag: "OTC 藥品", imgColor: "#f0f0f0" }
+    ];
+
+    // 初始化商品列表
+    const grid = document.getElementById('productGrid');
+    products.forEach(p => {
+        grid.innerHTML += `
+            <div class="product-card" id="pid-${p.id}">
+                <div class="tag-rec">鴨鴨推薦 ✨</div>
+                <div class="p-img" style="background:${p.imgColor}">商品圖</div>
+                <div class="p-name">${p.name}</div>
+                <div class="p-price">$${p.price}</div>
+            </div>
+        `;
+    });
+
+    // 聊天室開關
+    function toggleChat() {
+        const win = document.getElementById('chatWindow');
+        win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+        // 打開時自動聚焦輸入框
+        if (win.style.display === 'flex') {
+            document.getElementById('userInput').focus();
         }
-        
-        // 預設顯示對話
-        showScene('chat');
-    </script>
+    }
+
+    // 處理按鍵
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') sendMessage();
+    }
+
+    // 發送訊息邏輯 (模擬後端)
+    function sendMessage() {
+        const input = document.getElementById('userInput');
+        const text = input.value.trim();
+        if (!text) return;
+
+        // 1. 顯示使用者訊息
+        addMessage(text, 'user');
+        input.value = '';
+
+        // 2. 模擬 RAG 思考
+        showTyping(true);
+
+        setTimeout(() => {
+            // 3. 簡單的關鍵字觸發邏輯 (模擬 AI 回應)
+            let response = "";
+            let recProductId = null;
+            let recReasonText = "";
+
+            if (text.includes("關節") || text.includes("膝蓋") || text.includes("婆婆") || text.includes("痛") || text.includes("阿嬤")) {
+                response = "聽起來長輩可能有退化性關節炎的困擾。針對這個狀況，我建議選擇含有 **UC-II** 或 **高濃度魚油** 的產品，能幫助抗發炎並潤滑關節。🦆";
+                recProductId = 2; // 推薦 UC-II
+                recReasonText = "根據您的描述，這款含有足量 UC-II，是許多藥師推薦的選擇！";
+            } else if (text.includes("營養") || text.includes("長輩") || text.includes("體力") || text.includes("桂格")) {
+                response = "如果是要幫家中長輩補充體力，營養均衡非常好吸收，很適合食慾不佳的長輩喔！";
+                recProductId = 3;
+                recReasonText = "大樹熱銷款，營養均衡，評價很好喔！";
+            } else if (text.includes("眼睛") || text.includes("葉黃素") || text.includes("酸")) {
+                response = "現代人用眼過度，**葉黃素**搭配**花青素**效果更好喔！建議飯後食用吸收較佳。";
+                recProductId = 5;
+                recReasonText = "這款是游離型葉黃素，吸收率較好。";
+            } else {
+                response = "這個問題比較專業 🤔，建議您可以到大樹實體門市諮詢藥師，或是我們可以先從熱門的綜合維他命開始看起？";
+            }
+
+            showTyping(false);
+            addMessage(response, 'duck');
+
+            // 4. 如果有推薦商品，顯示推薦卡並高亮背後的商品
+            if (recProductId) {
+                const p = products.find(i => i.id === recProductId);
+                addRecCard(p, recReasonText);
+                
+                // 網頁連動效果 (Highlight)
+                document.querySelectorAll('.product-card').forEach(c => {
+                    c.style.border = "2px solid transparent";
+                    c.querySelector('.tag-rec').style.display = "none";
+                });
+                const targetCard = document.getElementById(`pid-${p.id}`);
+                targetCard.style.border = "2px solid #F39800";
+                targetCard.querySelector('.tag-rec').style.display = "block";
+                // 平滑捲動到商品位置
+                setTimeout(() => {
+                     targetCard.scrollIntoView({behavior: "smooth", block: "center"});
+                }, 500);
+            }
+
+        }, 1200); // 模擬延遲
+    }
+
+    function addMessage(text, sender) {
+        const chatBox = document.getElementById('chatMsg');
+        chatBox.innerHTML += `
+            <div class="msg msg-${sender}">
+                <div class="bubble">${text}</div>
+            </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function addRecCard(product, reason) {
+        const chatBox = document.getElementById('chatMsg');
+        chatBox.innerHTML += `
+            <div class="msg msg-duck">
+                <div class="rec-card" onclick="alert('（模擬）導引至商品頁面: ${product.name}')">
+                    <img src="" style="background:${product.imgColor}" alt="${product.name}">
+                    <div class="rec-info">
+                        <div class="rec-title">${product.name}</div>
+                        <div class="rec-reason">${reason}</div>
+                        <div class="rec-action">點擊查看詳情 ></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function showTyping(show) {
+        document.getElementById('typingIndicator').style.display = show ? 'block' : 'none';
+    }
+</script>
+
 </body>
 </html>
