@@ -144,7 +144,21 @@
             justify-content: center;
             font-size: 16px;
         }
-
+/* === 新增：頁尾樣式 === */
+    footer {
+        background-color: #333; /* 深灰色背景 */
+        color: white;           /* 白色文字 */
+        text-align: center;     /* 文字置中 */
+        padding: 20px 0;        /* 上下留白 */
+        margin-top: 50px;       /* 跟上方商品區隔開 */
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    footer .team-info {
+        color: #F39800; /* 大樹橘，強調隊名 */
+        font-weight: bold;
+        font-size: 16px;
+    }
         .typing { font-size: 12px; color: #888; margin-left: 15px; margin-bottom: 10px; display: none; font-style: italic;}
     </style>
 </head>
@@ -196,7 +210,14 @@
         <button onclick="sendMessage()">➤</button>
     </div>
 </div>
-
+<footer>
+    <div class="team-info">團隊：一鴨tree吃 🦆</div>
+    <div>嘉南藥理大學 藥學系</div>
+    <div style="font-size: 12px; color: #aaa; margin-top: 5px;">
+        本網頁僅供【大樹藥局第三屆創意競賽】展示使用，非真實購物網站<br>
+        Copyright © 2026 Pharma.Duck. All rights reserved.
+    </div>
+</footer>
 <script>
     // 模擬商品資料庫
     const products = [
