@@ -292,8 +292,8 @@
                     recReasonText = "含鐵配方，專為女性設計。";
                 }
                 // 5. 老人/長輩 (針對關節)
-                else if (who.includes("老") || who.includes("長") || who.includes("嬤") || who.includes("公")) {
-                    if (userProfile.allergy.includes("蝦") || userProfile.allergy.includes("蟹")) {
+                else if (who.includes("老") || who.includes("長") || who.includes("爺") || who.includes("奶") || who.includes("嬤") || who.includes("公")) {
+                    if (userProfile.allergy.includes("蝦") || userProfile.allergy.includes("蟹")|| userProfile.allergy.includes("海鮮")) {
                         response = "因為有**蝦蟹過敏**，不建議吃葡萄糖胺。強烈推薦 **UC-II**，雞軟骨萃取，安全有效！";
                         recProductId = 5;
                         recReasonText = "⚠️ 避開過敏原的最佳選擇！";
