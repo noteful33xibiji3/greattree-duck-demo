@@ -186,7 +186,7 @@
         // 女性成人
         { id: 4, name: "巧克力 膠原蛋白粉", price: 990, tag: "女性美麗", image: "https://placehold.co/150x150/f48fb1/333?text=Women+Collagen", target: "adult_f", allergy: "none" },
         // 長輩/老人
-        { id: 5, name: "挺立 UC-II 關鍵迷你錠", price: 1580, tag: "長輩關節", image: "https://placehold.co/150x150/e6ee9c/333?text=Senior+UCII", target: "senior", allergy: "none" },
+        { id: 5, name: "挺立 UC-II 關鍵迷你錠", price: 1580, tag: "長輩關節", image: "https://placehold.co/150x150/e6ee9c/333?text=Senior+UCII", target: "senior", allergy: "none" ,keywords: "眼睛,酸澀,看手機,視力,模糊,葉黃素"},
         // 一般通用
         { id: 6, name: "大樹 深海魚油 1000mg", price: 1200, tag: "心血管", image: "https://placehold.co/150x150/80cbc4/333?text=Fish+Oil", target: "adult,senior", allergy: "none" },
         // 腸胃通用
@@ -194,7 +194,7 @@
          // 過敏替代
         { id: 8, name: "植物性 葡萄糖胺", price: 700, tag: "全素可食", image: "https://placehold.co/150x150/a5d6a7/333?text=Plant+Gluco", target: "senior", allergy: "none" }
          // 睡眠
-        { id: 9, name: "三得利 芝麻明 E", price: 1600, tag: "睡眠輔助", image: "https://placehold.co/150x150/5c6bc0/fff?text=Sleep+GABA", target: "adult,senior", allergy: "none" }
+        { id: 9, name: "三得利 芝麻明 E", price: 1600, tag: "睡眠輔助", image: "https://placehold.co/150x150/5c6bc0/fff?text=Sleep+GABA", target: "adult,senior", allergy: "none",keywords: "睡不著,失眠,睡眠,好累,壓力大,睡覺"}
     ];
 
     // 初始化商品列表
@@ -223,7 +223,7 @@
         if (e.key === 'Enter') sendMessage();
     }
 
-    // === 2. 對話邏輯 (修正了 function 拼字錯誤) ===
+   // === 智慧自動推薦版 ===
     let chatStep = 0; 
     let userProfile = { symptom: "", who: "", allergy: "" }; 
 
@@ -241,14 +241,26 @@
             let recProductId = null;
             let recReasonText = "";
 
-            // 步驟 0: 問症狀
+            // 步驟 0: 接收症狀
             if (chatStep === 0) {
                 userProfile.symptom = text;
-                if(text.includes("重來")) {
-                    response = "對話已重置！請告訴我您的症狀？";
-                    chatStep = 0;
+                
+                // ★★★ 自動搜尋邏輯開始 ★★★
+                // 拿客人輸入的字 (text)，去跟每一個商品的 keywords 比對
+                const matchProduct = products.find(p => {
+                    // 把關鍵字拆開來，一個一個比對
+                    const keys = p.keywords ? p.keywords.split(',') : [];
+                    return keys.some(k => text.includes(k));
+                });
+
+                if (matchProduct) {
+                    // 如果找到了！直接鎖定這個商品
+                    userProfile.targetProduct = matchProduct; 
+                    response = `收到，您想找改善「${text}」的產品。🦆<br>請問是給誰用的呢？(確認一下適用族群)`;
+                    chatStep = 1;
                 } else {
-                    response = `收到，想找「${text}」相關產品。🦆<br>請問是給誰用的？<br>(例如：嬰兒、小孩、男性、女性、老人？)`;
+                    // 如果沒找到
+                    response = `收到，關於「${text}」的問題。🦆<br>請問是給誰用的呢？(我會盡量幫您找找)`;
                     chatStep = 1;
                 }
             } 
@@ -260,61 +272,28 @@
                 chatStep = 2;
             }
 
-            // 步驟 2: 問過敏 -> 推薦
+            // 步驟 2: 最終推薦
             else if (chatStep === 2) {
                 userProfile.allergy = text;
                 chatStep = 0; // 重置
 
-                // --- 智慧推薦邏輯 ---
-                const who = userProfile.who;
-                const sym = userProfile.symptom;
-
-                // 1. 嬰幼兒推薦
-                if (who.includes("嬰") || who.includes("寶")) {
-                    response = "寶寶的腸胃較敏感，推薦 **妙利散**，細粉好餵食，建立健康腸道！";
-                    recProductId = 1; 
-                    recReasonText = "專為嬰幼兒設計，安全溫和。";
-                }
-                // 2. 小孩推薦
-                else if (who.includes("小") || who.includes("童")) {
-                    response = "小朋友成長期需要均衡營養，推薦 **小兒利撒爾**，好吃又營養！";
-                    recProductId = 2;
-                    recReasonText = "兒童專用配方，補足成長所需。";
-                }
-                // 3. 男性推薦
-                else if (who.includes("男")) {
-                    response = "針對男性上班族，推薦 **B群+鋅**，增強體力與精神！";
-                    recProductId = 3;
-                    recReasonText = "加強鋅配方，男性首選。";
-                }
-                // 4. 女性推薦
-                else if (who.includes("女")) {
-                    response = "愛美的女性推薦 **膠原蛋白粉**，維持氣色紅潤！";
-                    recProductId = 4;
-                    recReasonText = "含鐵配方，專為女性設計。";
-                }
-                    else if (sym.includes("睡") || sym.includes("失眠") || sym.includes("累")) {
-                    response = "最近睡眠品質不好嗎？🦆<br>推薦這款 **芝麻明 E**，含有天然芝麻素與維生素E，能幫助放鬆入睡，隔天精神更好喔！";
-                    recProductId = 9; // 對應上面的 ID: 9
-                    recReasonText = "幫助入睡，調節生理機能。";
-                }
-                // 5. 老人/長輩 (針對關節)
-                else if (who.includes("老") || who.includes("長") || who.includes("爺") || who.includes("奶") || who.includes("嬤") || who.includes("公")) {
-                    if (userProfile.allergy.includes("蝦") || userProfile.allergy.includes("蟹")|| userProfile.allergy.includes("海鮮")) {
-                        response = "因為有**蝦蟹過敏**，不建議吃葡萄糖胺。強烈推薦 **UC-II**，雞軟骨萃取，安全有效！";
-                        recProductId = 5;
-                        recReasonText = "⚠️ 避開過敏原的最佳選擇！";
+                // 如果剛剛步驟 0 有自動比對到商品，就直接推那一個
+                if (userProfile.targetProduct) {
+                    const p = userProfile.targetProduct;
+                    
+                    // 這裡可以加一點簡單的「過敏檢查」
+                    if (userProfile.allergy !== "無" && p.allergy !== "none" && userProfile.allergy.includes(p.allergy)) {
+                         response = `原本想推薦 **${p.name}**，但發現它含有您過敏的成分！🦆⚠️<br>建議您諮詢藥師尋找替代品。`;
                     } else {
-                        response = "長輩保養關鍵，推薦 **大樹深海魚油** 或葡萄糖胺，潤滑關鍵部位。";
-                        recProductId = 6;
-                        recReasonText = "高濃度 Omega-3，抗發炎保養。";
+                         response = `根據您的需求，強烈推薦這款 **${p.name}**！🦆<br>它非常適合針對「${userProfile.symptom}」做保養。`;
+                         recProductId = p.id;
+                         recReasonText = `針對 ${userProfile.symptom} 的熱門推薦。`;
                     }
-                }
-                // 預設
-                else {
-                    response = "根據您的需求，推薦這款熱銷商品！";
-                    recProductId = 7;
-                    recReasonText = "居家常備良藥。";
+                } else {
+                    // 如果完全沒對到關鍵字，就推通用的
+                    response = "根據您的需求，推薦這款熱銷的綜合保養品，補充基礎營養！";
+                    recProductId = 6; // 設定一個預設商品ID (例如魚油)
+                    recReasonText = "大樹藥師推薦，居家常備。";
                 }
             }
 
@@ -323,14 +302,13 @@
 
             if (recProductId) {
                 const p = products.find(i => i.id === recProductId);
-                if(p) addRecCard(p, recReasonText);
-                
-                // 捲動效果
-                const targetCard = document.getElementById(`pid-${recProductId}`);
-                if(targetCard){
-                    document.querySelectorAll('.product-card').forEach(c => c.style.border = "2px solid transparent");
-                    targetCard.style.border = "2px solid #F39800";
-                    setTimeout(() => targetCard.scrollIntoView({behavior: "smooth", block: "center"}), 500);
+                if(p) {
+                    addRecCard(p, recReasonText);
+                    // 捲動效果
+                    setTimeout(() => {
+                        const targetCard = document.getElementById(`pid-${p.id}`);
+                        if(targetCard) targetCard.scrollIntoView({behavior: "smooth", block: "center"});
+                    }, 500);
                 }
             }
 
