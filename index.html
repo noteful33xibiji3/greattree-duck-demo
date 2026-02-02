@@ -33,7 +33,15 @@
         .product-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; position: relative; border: 2px solid transparent;}
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .tag-rec { position: absolute; top: -2px; right: -2px; background: var(--greattree-orange); color: white; padding: 4px 12px; font-size: 12px; border-radius: 0 8px 0 8px; display: none; z-index: 2; font-weight: bold;}
-        .p-img { height: 150px; background: #eee; margin-bottom: 10px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #aaa; }
+        /* 找到原本的 .p-img 修改內容如下 */
+    .p-img { 
+        width: 100%;       /* 寬度填滿 */
+        height: 150px;     /* 高度固定 */
+        object-fit: contain; /* 保持比例，整張圖都看得到 (適合藥罐) */
+        /* 或者用 object-fit: cover; (填滿格子，但可能會切到邊邊) */
+        margin-bottom: 10px; 
+        background: #fff;  /* 背景改白色比較乾淨 */
+    }
         .p-name { font-weight: bold; margin-bottom: 5px; height: 40px; overflow: hidden; font-size: 15px;}
         .p-price { color: #d0021b; font-weight: bold; font-size: 18px; }
 
@@ -219,18 +227,20 @@
     </div>
 </footer>
 <script>
-    // 模擬商品資料庫
-    const products = [
-        { id: 1, name: "大樹特選 深海魚油 1000mg", price: 1200, tag: "心血管/關節", imgColor: "#a3d1ff" },
-        { id: 2, name: "挺立 關鍵迷你錠 UC-II", price: 1580, tag: "關節保養", imgColor: "#ffcdd2" },
-        { id: 3, name: "桂格 完膳營養素 (原味)", price: 650, tag: "成人營養", imgColor: "#e1bee7" },
-        { id: 4, name: "善存 銀寶綜合維他命", price: 880, tag: "長輩維他命", imgColor: "#fff9c4" },
-        { id: 5, name: "萊萃美 葉黃素膠囊", price: 900, tag: "視力保健", imgColor: "#c8e6c9" },
-        { id: 6, name: "合利他命 Ex Plus", price: 1800, tag: "B群/痠痛", imgColor: "#ffecb3" },
-        { id: 7, name: "大樹 葡萄糖胺飲", price: 600, tag: "關節保養", imgColor: "#b2dfdb" },
-        { id: 8, name: "普拿疼 止痛藥 (乙醯胺酚)", price: 150, tag: "OTC 藥品", imgColor: "#f0f0f0" }
-    ];
 
+  // 模擬商品資料庫 (包含適用對象與成分標記)
+    const products = [
+        // 老人/成人 - 關節 (含蝦蟹)
+        { id: 1, name: "大樹 葡萄糖胺飲 (一般款)", price: 600, tag: "關節保養", image: "p_gluco.jpg", imgColor: "#b2dfdb", target: "adult,senior", allergy: "shellfish" },
+        // 老人/成人 - 關節 (UC-II 不含蝦蟹，適合過敏者)
+        { id: 2, name: "挺立 關鍵迷你錠 UC-II", price: 1580, tag: "關節保養", image: "p_ucii.jpg", imgColor: "#ffcdd2", target: "adult,senior", allergy: "none" },
+        // 嬰幼兒 - 腸胃
+        { id: 3, name: "妙利散 益生菌 (粉末)", price: 850, tag: "嬰幼兒腸胃", image: "p_baby_bio.jpg", imgColor: "#fff9c4", target: "baby,child", allergy: "none" },
+        // 成人 - 腸胃
+        { id: 4, name: "若元錠 Wakamoto", price: 600, tag: "成人腸胃", image: "p_waka.jpg", imgColor: "#e1bee7", target: "adult", allergy: "none" },
+        // 一般 - 維他命
+        { id: 5, name: "萊萃美 綜合維他命", price: 900, tag: "基礎保養", image: "p_vit.jpg", imgColor: "#c8e6c9", target: "adult", allergy: "none" },
+    ];
     // 初始化商品列表
     const grid = document.getElementById('productGrid');
     products.forEach(p => {
@@ -260,63 +270,117 @@
     }
 
     // 發送訊息邏輯 (模擬後端)
+    // === 全新的對話狀態管理 ===
+    let chatStep = 0; // 0:等待症狀, 1:等待對象, 2:等待過敏史
+    let userProfile = { symptom: "", who: "", allergy: "" }; // 暫存客人需求
+
     function sendMessage() {
         const input = document.getElementById('userInput');
         const text = input.value.trim();
         if (!text) return;
 
-        // 1. 顯示使用者訊息
+        // 顯示使用者訊息
         addMessage(text, 'user');
         input.value = '';
-
-        // 2. 模擬 RAG 思考
         showTyping(true);
 
         setTimeout(() => {
-            // 3. 簡單的關鍵字觸發邏輯 (模擬 AI 回應)
             let response = "";
             let recProductId = null;
             let recReasonText = "";
 
-            if (text.includes("關節") || text.includes("膝蓋") || text.includes("婆婆") || text.includes("痛") || text.includes("阿嬤")) {
-                response = "聽起來長輩可能有退化性關節炎的困擾。針對這個狀況，我建議選擇含有 **UC-II** 或 **高濃度魚油** 的產品，能幫助抗發炎並潤滑關節。🦆";
-                recProductId = 2; // 推薦 UC-II
-                recReasonText = "根據您的描述，這款含有足量 UC-II，是許多藥師推薦的選擇！";
-            } else if (text.includes("營養") || text.includes("長輩") || text.includes("體力") || text.includes("桂格")) {
-                response = "如果是要幫家中長輩補充體力，營養均衡非常好吸收，很適合食慾不佳的長輩喔！";
-                recProductId = 3;
-                recReasonText = "大樹熱銷款，營養均衡，評價很好喔！";
-            } else if (text.includes("眼睛") || text.includes("葉黃素") || text.includes("酸")) {
-                response = "現代人用眼過度，**葉黃素**搭配**花青素**效果更好喔！建議飯後食用吸收較佳。";
-                recProductId = 5;
-                recReasonText = "這款是游離型葉黃素，吸收率較好。";
-            } else {
-                response = "這個問題比較專業 🤔，建議您可以到大樹實體門市諮詢藥師，或是我們可以先從熱門的綜合維他命開始看起？";
+            // --- 步驟 0: 剛開始，客人在講症狀 ---
+            if (chatStep === 0) {
+                userProfile.symptom = text; // 記住症狀
+                
+                // 判斷是否為結束或重置
+                if(text.includes("重來") || text.includes("謝謝")) {
+                    response = "不客氣！隨時歡迎回來找鴨鴨。🦆 (對話已重置)";
+                    chatStep = 0;
+                } else {
+                    // 進入下一步：問對象
+                    response = `收到，您想找改善「${text}」的產品。🦆<br><br>請問這主要是給誰使用的呢？<br>(例如：嬰兒、小孩、成人、老人？性別？)`;
+                    chatStep = 1; // 切換狀態
+                }
+            } 
+            
+            // --- 步驟 1: 客人回答了對象 (年齡/性別) ---
+            else if (chatStep === 1) {
+                userProfile.who = text; // 記住對象
+                
+                // 進入下一步：問過敏
+                response = "了解。最後確認一下，使用者有對什麼食物或藥物**過敏**嗎？<br>或是正在服用什麼慢性病藥物？(若無請輸入「無」)";
+                chatStep = 2; // 切換狀態
+            }
+
+            // --- 步驟 2: 客人回答了過敏史 -> 最終推薦 ---
+            else if (chatStep === 2) {
+                userProfile.allergy = text; // 記住過敏
+                chatStep = 0; // 流程結束，重置回步驟 0
+
+                // === 鴨鴨大腦 (簡易邏輯判斷) ===
+                
+                // 情境 A: 關節痛 (區分是否有蝦蟹過敏)
+                if (userProfile.symptom.includes("關節") || userProfile.symptom.includes("痛")) {
+                    if (userProfile.allergy.includes("蝦") || userProfile.allergy.includes("蟹") || userProfile.allergy.includes("海鮮")) {
+                        // 有過敏 -> 推 UC-II (非蝦蟹來源)
+                        response = "鴨鴨幫您分析好了！🦆<br><br>雖然一般常推薦葡萄糖胺，但因為您提到有**海鮮過敏**，為了安全，我強烈建議選擇 **UC-II (非變性二型膠原蛋白)**。<br><br>它是從雞胸軟骨萃取，不含蝦蟹過敏原，對長輩關節保養效果也很好！";
+                        recProductId = 2; // UC-II
+                        recReasonText = "⚠️ 避開過敏原的安全首選！";
+                    } else {
+                        // 無過敏 -> 推 葡萄糖胺
+                        response = "針對長輩的關節保養，若是沒有特殊過敏，這款 **大樹葡萄糖胺飲** 液態好吸收，是很多長輩的回購首選喔！";
+                        recProductId = 1; // 葡萄糖胺
+                        recReasonText = "液態好吸收，經典熱銷款。";
+                    }
+                }
+                
+                // 情境 B: 肚子痛/腸胃 (區分是嬰兒還是成人)
+                else if (userProfile.symptom.includes("肚子") || userProfile.symptom.includes("拉肚子") || userProfile.symptom.includes("腸胃")) {
+                    if (userProfile.who.includes("嬰") || userProfile.who.includes("兒") || userProfile.who.includes("寶寶")) {
+                        // 嬰兒 -> 推 妙利散
+                        response = "寶寶的腸胃比較敏感，不能吃成人的藥喔！🦆<br><br>建議使用這款 **妙利散**，它是細粉狀好餵食，且菌株耐酸，能幫助寶寶建立健康的腸道環境。";
+                        recProductId = 3; // 嬰兒益生菌
+                        recReasonText = "專為嬰幼兒設計，細粉好吞嚥。";
+                    } else {
+                        // 成人 -> 推 若元錠
+                        response = "如果是成人消化不良或脹氣，推薦這款經典的 **若元錠 (Wakamoto)**，同時含有消化酵素與益生菌，能有效幫助消化。";
+                        recProductId = 4; // 若元錠
+                        recReasonText = "消化酵素+益生菌，雙效合一。";
+                    }
+                }
+                
+                // 預設回應
+                else {
+                    response = "收到！根據您的需求，我整理了以下適合的熱門商品供您參考。建議服用前先諮詢門市藥師確認劑量喔！";
+                    recProductId = 5; // 綜合維他命
+                    recReasonText = "基礎營養補充，適合大多數人。";
+                }
             }
 
             showTyping(false);
             addMessage(response, 'duck');
 
-            // 4. 如果有推薦商品，顯示推薦卡並高亮背後的商品
             if (recProductId) {
                 const p = products.find(i => i.id === recProductId);
                 addRecCard(p, recReasonText);
                 
-                // 網頁連動效果 (Highlight)
+                // 網頁連動效果
                 document.querySelectorAll('.product-card').forEach(c => {
                     c.style.border = "2px solid transparent";
                     c.querySelector('.tag-rec').style.display = "none";
                 });
                 const targetCard = document.getElementById(`pid-${p.id}`);
-                targetCard.style.border = "2px solid #F39800";
-                targetCard.querySelector('.tag-rec').style.display = "block";
-                // 平滑捲動到商品位置
-                setTimeout(() => {
-                     targetCard.scrollIntoView({behavior: "smooth", block: "center"});
-                }, 500);
+                if(targetCard){ // 確保商品卡還在畫面上
+                    targetCard.style.border = "2px solid #F39800";
+                    targetCard.querySelector('.tag-rec').style.display = "block";
+                    setTimeout(() => {
+                         targetCard.scrollIntoView({behavior: "smooth", block: "center"});
+                    }, 500);
+                }
             }
 
-        }, 1200); // 模擬延遲
+        }, 1000);
     }
 
     function addMessage(text, sender) {
@@ -329,12 +393,14 @@
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function addRecCard(product, reason) {
+    ffunction addRecCard(product, reason) {
         const chatBox = document.getElementById('chatMsg');
         chatBox.innerHTML += `
             <div class="msg msg-duck">
                 <div class="rec-card" onclick="alert('（模擬）導引至商品頁面: ${product.name}')">
-                    <img src="" style="background:${product.imgColor}" alt="${product.name}">
+                    
+                    <img src="${product.image}" alt="${product.name}">
+                    
                     <div class="rec-info">
                         <div class="rec-title">${product.name}</div>
                         <div class="rec-reason">${reason}</div>
@@ -345,7 +411,6 @@
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
-
     function showTyping(show) {
         document.getElementById('typingIndicator').style.display = show ? 'block' : 'none';
     }
