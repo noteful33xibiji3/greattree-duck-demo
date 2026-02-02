@@ -63,7 +63,12 @@
             display: block;
             filter: drop-shadow(2px 5px 15px rgba(0,0,0,0.3));
         }
-
+/* 請確保 .logo img 有設定高度或寬度 */
+.logo img {
+    height: 50px;    /* 限制高度為 50 像素 */
+    width: auto;      /* 寬度隨比例縮放 */
+    object-fit: contain;
+}
         /* Pharma.Duck 對話視窗 */
         .duck-chat-window {
             position: fixed;
