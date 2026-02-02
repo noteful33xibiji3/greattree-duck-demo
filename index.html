@@ -13,13 +13,14 @@
         }
         body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; padding: 0; background-color: var(--bg-gray); }
         
-        /* 模擬導航列 (Logo 修改處) */
+        /* 模擬導航列 */
         header { background: white; padding: 10px 0; border-bottom: 3px solid var(--greattree-green); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
         
-        /* 修改：Logo 區塊現在包含圖片 */
-        .logo { display: flex; align-items: center; }
-        .logo img { height: 50px; width: auto; } /* 設定 Logo 高度 */
+        /* Logo 區塊 */
+        .logo { display: flex; align-items: center; font-size: 24px; font-weight: bold; color: var(--greattree-green); }
+        /* 如果你有 logo.png 請把下面這行註解打開，並把文字註解掉 */
+        /* .logo img { height: 50px; width: auto; } */
 
         .search-bar { flex-grow: 1; margin: 0 40px; display: flex; }
         .search-bar input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; outline: none;}
@@ -33,89 +34,66 @@
         .product-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; position: relative; border: 2px solid transparent;}
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .tag-rec { position: absolute; top: -2px; right: -2px; background: var(--greattree-orange); color: white; padding: 4px 12px; font-size: 12px; border-radius: 0 8px 0 8px; display: none; z-index: 2; font-weight: bold;}
-        /* 找到原本的 .p-img 修改內容如下 */
-    .p-img { 
-        width: 100%;       /* 寬度填滿 */
-        height: 150px;     /* 高度固定 */
-        object-fit: contain; /* 保持比例，整張圖都看得到 (適合藥罐) */
-        /* 或者用 object-fit: cover; (填滿格子，但可能會切到邊邊) */
-        margin-bottom: 10px; 
-        background: #fff;  /* 背景改白色比較乾淨 */
-    }
+        
+        .p-img { 
+            width: 100%;       
+            height: 150px;     
+            object-fit: contain; 
+            margin-bottom: 10px; 
+            background: #fff;  
+        }
         .p-name { font-weight: bold; margin-bottom: 5px; height: 40px; overflow: hidden; font-size: 15px;}
         .p-price { color: #d0021b; font-weight: bold; font-size: 18px; }
 
-        /* 修改：右下角大型導購鴨鴨 (取代原本的圓形按鈕) */
+        /* 右下角大型導購鴨鴨 */
         .duck-assistant-large {
             position: fixed;
-            bottom: 0px; /* 貼底站立 */
+            bottom: 0px; 
             right: 20px;
-            width: 220px; /* 設定寬度，讓它看起來夠大 */
+            width: 220px; 
             height: auto;
             cursor: pointer;
             z-index: 1000;
             transition: transform 0.3s ease;
         }
-        /* 滑鼠移過去時稍微浮起 */
-        .duck-assistant-large:hover {
-            transform: translateY(-10px);
-        }
+        .duck-assistant-large:hover { transform: translateY(-10px); }
         .duck-assistant-large img {
             width: 100%;
             height: auto;
             display: block;
-            /* 加上陰影增加立體感 */
             filter: drop-shadow(2px 5px 15px rgba(0,0,0,0.3));
         }
 
         /* Pharma.Duck 對話視窗 */
         .duck-chat-window {
             position: fixed;
-            bottom: 200px; /* 調整視窗位置，避免擋住大鴨鴨 */
+            bottom: 200px; 
             right: 50px;
             width: 350px;
             height: 500px;
             background: white;
             border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            display: none; /* 預設隱藏 */
+            display: none; 
             flex-direction: column;
-            z-index: 1001; /* 比鴨子更高一層 */
+            z-index: 1001; 
             overflow: hidden;
             border: 1px solid #ddd;
         }
         
-        /* 聊天視窗頭部 */
-        .chat-header {
-            background: var(--greattree-green); color: white; padding: 15px; display: flex; align-items: center;
-        }
+        .chat-header { background: var(--greattree-green); color: white; padding: 15px; display: flex; align-items: center; }
         .chat-header-img { width: 40px; height: 40px; background: white; border-radius: 50%; margin-right: 10px; overflow: hidden; border: 2px solid var(--greattree-orange);}
         .chat-header-img img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 聊天內容區 */
-        .chat-messages {
-            flex-grow: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background: #fafafa;
-        }
+        .chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; background: #fafafa; }
         .msg { margin-bottom: 12px; max-width: 85%; line-height: 1.4; font-size: 14px; }
         .msg-duck { align-self: flex-start; }
         .msg-duck .bubble { background: white; padding: 12px 16px; border-radius: 18px 18px 18px 4px; border: 1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .msg-user { align-self: flex-end; margin-left: auto; text-align: right; }
         .msg-user .bubble { background: var(--greattree-green); color: white; padding: 10px 14px; border-radius: 18px 18px 4px 18px; display: inline-block; }
         
-        /* 推薦商品卡片 (在對話中) */
         .rec-card {
-            background: white;
-            border: 2px solid var(--greattree-orange);
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            cursor: pointer;
-            transition: 0.2s;
+            background: white; border: 2px solid var(--greattree-orange); border-radius: 8px; padding: 10px; margin-top: 10px; display: flex; gap: 10px; cursor: pointer; transition: 0.2s;
         }
         .rec-card:hover { background: #fffbe6; }
         .rec-card img { width: 60px; height: 60px; background: #ddd; object-fit: cover; border-radius: 4px;}
@@ -124,49 +102,12 @@
         .rec-reason { font-size: 12px; color: #666; margin-top: 4px; line-height: 1.3; }
         .rec-action { margin-top: 8px; font-size: 12px; color: var(--greattree-orange); font-weight: bold; text-align: right;}
 
-        /* 輸入區 */
-        .chat-input-area {
-            padding: 10px;
-            background: white;
-            border-top: 1px solid #eee;
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input-area input {
-            flex-grow: 1;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            padding: 10px 15px;
-            outline: none;
-        }
-        .chat-input-area button {
-            background: var(--greattree-orange);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-/* === 新增：頁尾樣式 === */
-    footer {
-        background-color: #333; /* 深灰色背景 */
-        color: white;           /* 白色文字 */
-        text-align: center;     /* 文字置中 */
-        padding: 20px 0;        /* 上下留白 */
-        margin-top: 50px;       /* 跟上方商品區隔開 */
-        font-size: 14px;
-        line-height: 1.6;
-    }
-    footer .team-info {
-        color: #F39800; /* 大樹橘，強調隊名 */
-        font-weight: bold;
-        font-size: 16px;
-    }
+        .chat-input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        .chat-input-area input { flex-grow: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; outline: none; }
+        .chat-input-area button { background: var(--greattree-orange); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+        footer { background-color: #333; color: white; text-align: center; padding: 20px 0; margin-top: 50px; font-size: 14px; line-height: 1.6; }
+        footer .team-info { color: #F39800; font-weight: bold; font-size: 16px; }
         .typing { font-size: 12px; color: #888; margin-left: 15px; margin-bottom: 10px; display: none; font-style: italic;}
     </style>
 </head>
@@ -175,7 +116,7 @@
 <header>
     <div class="nav-container">
         <div class="logo">
-        <img src="greattree.jpg" alt="大樹藥局 Logo"> 
+            <img src="images/logo.png" alt="大樹藥局 Logo" onerror="this.style.display='none'; this.parentNode.innerText='🌳 大樹健康購物網';"> 
         </div>
         <div class="search-bar">
             <input type="text" placeholder="搜尋商品、品牌或輸入症狀 (Demo版)...">
@@ -187,19 +128,18 @@
 
 <div class="main-content">
     <div class="banner">🎉 Pharma.Duck 小鴨藥師 全新上線！</div>
-    <h2 style="color: #333;">熱門保健品</h2>
-    <div class="product-grid" id="productGrid">
-        </div>
+    <h2 style="color: #333;">熱門保健品專區</h2>
+    <div class="product-grid" id="productGrid"></div>
 </div>
 
 <div class="duck-assistant-large" onclick="toggleChat()">
-    <img src="my_duck.png" alt="Ph.D 鴨鴨導購">
+    <img src="images/my_duck.png" alt="Ph.D 鴨鴨導購" onerror="this.src='https://placehold.co/200x200/F39800/white?text=Duck';">
 </div>
 
 <div class="duck-chat-window" id="chatWindow">
     <div class="chat-header">
         <div class="chat-header-img">
-            <img src="my_duck.png" alt="鴨">
+            <img src="images/my_duck.png" alt="鴨" onerror="this.src='https://placehold.co/50x50/F39800/white?text=D';">
         </div>
         <div style="font-weight: bold;">Ph.D 鴨子藥師 (線上諮詢)</div>
         <div style="margin-left: auto; cursor: pointer; font-size: 20px;" onclick="toggleChat()">✕</div>
@@ -214,10 +154,11 @@
     <div class="typing" id="typingIndicator">鴨鴨正在思考中... 🤔</div>
 
     <div class="chat-input-area">
-        <input type="text" id="userInput" placeholder="輸入症狀，例：奶奶膝蓋痛..." onkeypress="handleKeyPress(event)">
+        <input type="text" id="userInput" placeholder="輸入症狀，例：想找益生菌..." onkeypress="handleKeyPress(event)">
         <button onclick="sendMessage()">➤</button>
     </div>
 </div>
+
 <footer>
     <div class="team-info">團隊：一鴨tree吃 🦆</div>
     <div>嘉南藥理大學 藥學系</div>
@@ -226,28 +167,36 @@
         Copyright © 2026 Pharma.Duck. All rights reserved.
     </div>
 </footer>
-<script>
 
-  // 模擬商品資料庫 (包含適用對象與成分標記)
+<script>
+    // === 1. 商品資料庫 (使用線上假圖，確保一定看得到圖片) ===
+    // 圖片來源使用 placehold.co，會自動生成帶文字的圖片
     const products = [
-        // 老人/成人 - 關節 (含蝦蟹)
-        { id: 1, name: "大樹 葡萄糖胺飲 (一般款)", price: 600, tag: "關節保養", image: "p_gluco.jpg", imgColor: "#b2dfdb", target: "adult,senior", allergy: "shellfish" },
-        // 老人/成人 - 關節 (UC-II 不含蝦蟹，適合過敏者)
-        { id: 2, name: "挺立 關鍵迷你錠 UC-II", price: 1580, tag: "關節保養", image: "p_ucii.jpg", imgColor: "#ffcdd2", target: "adult,senior", allergy: "none" },
-        // 嬰幼兒 - 腸胃
-        { id: 3, name: "妙利散 益生菌 (粉末)", price: 850, tag: "嬰幼兒腸胃", image: "p_baby_bio.jpg", imgColor: "#fff9c4", target: "baby,child", allergy: "none" },
-        // 成人 - 腸胃
-        { id: 4, name: "若元錠 Wakamoto", price: 600, tag: "成人腸胃", image: "p_waka.jpg", imgColor: "#e1bee7", target: "adult", allergy: "none" },
-        // 一般 - 維他命
-        { id: 5, name: "萊萃美 綜合維他命", price: 900, tag: "基礎保養", image: "p_vit.jpg", imgColor: "#c8e6c9", target: "adult", allergy: "none" },
+        // 嬰幼兒
+        { id: 1, name: "妙利散 益生菌 (嬰幼兒專用)", price: 850, tag: "嬰幼兒", image: "https://placehold.co/150x150/fff9c4/333?text=Baby+Bio", target: "baby", allergy: "none" },
+        // 兒童
+        { id: 2, name: "小兒利撒爾 綜合維他命", price: 450, tag: "兒童成長", image: "https://placehold.co/150x150/ffcc80/333?text=Kids+Vit", target: "child", allergy: "none" },
+        // 男性成人
+        { id: 3, name: "克補 B群+鋅 (男性專用)", price: 680, tag: "男性活力", image: "https://placehold.co/150x150/90caf9/333?text=Men+B+Zinc", target: "adult_m", allergy: "none" },
+        // 女性成人
+        { id: 4, name: "巧克力 膠原蛋白粉", price: 990, tag: "女性美麗", image: "https://placehold.co/150x150/f48fb1/333?text=Women+Collagen", target: "adult_f", allergy: "none" },
+        // 長輩/老人
+        { id: 5, name: "挺立 UC-II 關鍵迷你錠", price: 1580, tag: "長輩關節", image: "https://placehold.co/150x150/e6ee9c/333?text=Senior+UCII", target: "senior", allergy: "none" },
+        // 一般通用
+        { id: 6, name: "大樹 深海魚油 1000mg", price: 1200, tag: "心血管", image: "https://placehold.co/150x150/80cbc4/333?text=Fish+Oil", target: "adult,senior", allergy: "none" },
+        // 腸胃通用
+        { id: 7, name: "若元錠 Wakamoto", price: 600, tag: "腸胃消化", image: "https://placehold.co/150x150/ce93d8/333?text=Wakamoto", target: "adult", allergy: "none" },
+         // 過敏替代
+        { id: 8, name: "植物性 葡萄糖胺", price: 700, tag: "全素可食", image: "https://placehold.co/150x150/a5d6a7/333?text=Plant+Gluco", target: "senior", allergy: "none" }
     ];
+
     // 初始化商品列表
     const grid = document.getElementById('productGrid');
     products.forEach(p => {
         grid.innerHTML += `
             <div class="product-card" id="pid-${p.id}">
                 <div class="tag-rec">鴨鴨推薦 ✨</div>
-                <div class="p-img" style="background:${p.imgColor}">商品圖</div>
+                <img class="p-img" src="${p.image}" alt="${p.name}">
                 <div class="p-name">${p.name}</div>
                 <div class="p-price">$${p.price}</div>
             </div>
@@ -258,28 +207,24 @@
     function toggleChat() {
         const win = document.getElementById('chatWindow');
         win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
-        // 打開時自動聚焦輸入框
         if (win.style.display === 'flex') {
             document.getElementById('userInput').focus();
         }
     }
 
-    // 處理按鍵
     function handleKeyPress(e) {
         if (e.key === 'Enter') sendMessage();
     }
 
-    // 發送訊息邏輯 (模擬後端)
-    // === 全新的對話狀態管理 ===
-    let chatStep = 0; // 0:等待症狀, 1:等待對象, 2:等待過敏史
-    let userProfile = { symptom: "", who: "", allergy: "" }; // 暫存客人需求
+    // === 2. 對話邏輯 (修正了 function 拼字錯誤) ===
+    let chatStep = 0; 
+    let userProfile = { symptom: "", who: "", allergy: "" }; 
 
     function sendMessage() {
         const input = document.getElementById('userInput');
         const text = input.value.trim();
         if (!text) return;
 
-        // 顯示使用者訊息
         addMessage(text, 'user');
         input.value = '';
         showTyping(true);
@@ -289,72 +234,75 @@
             let recProductId = null;
             let recReasonText = "";
 
-            // --- 步驟 0: 剛開始，客人在講症狀 ---
+            // 步驟 0: 問症狀
             if (chatStep === 0) {
-                userProfile.symptom = text; // 記住症狀
-                
-                // 判斷是否為結束或重置
-                if(text.includes("重來") || text.includes("謝謝")) {
-                    response = "不客氣！隨時歡迎回來找鴨鴨。🦆 (對話已重置)";
+                userProfile.symptom = text;
+                if(text.includes("重來")) {
+                    response = "對話已重置！請告訴我您的症狀？";
                     chatStep = 0;
                 } else {
-                    // 進入下一步：問對象
-                    response = `收到，您想找改善「${text}」的產品。🦆<br><br>請問這主要是給誰使用的呢？<br>(例如：嬰兒、小孩、成人、老人？性別？)`;
-                    chatStep = 1; // 切換狀態
+                    response = `收到，想找「${text}」相關產品。🦆<br>請問是給誰用的？<br>(例如：嬰兒、小孩、男性、女性、老人？)`;
+                    chatStep = 1;
                 }
             } 
             
-            // --- 步驟 1: 客人回答了對象 (年齡/性別) ---
+            // 步驟 1: 問對象
             else if (chatStep === 1) {
-                userProfile.who = text; // 記住對象
-                
-                // 進入下一步：問過敏
-                response = "了解。最後確認一下，使用者有對什麼食物或藥物**過敏**嗎？<br>或是正在服用什麼慢性病藥物？(若無請輸入「無」)";
-                chatStep = 2; // 切換狀態
+                userProfile.who = text;
+                response = "了解。最後確認，有對藥物或食物**過敏**嗎？(若無請輸入「無」)";
+                chatStep = 2;
             }
 
-            // --- 步驟 2: 客人回答了過敏史 -> 最終推薦 ---
+            // 步驟 2: 問過敏 -> 推薦
             else if (chatStep === 2) {
-                userProfile.allergy = text; // 記住過敏
-                chatStep = 0; // 流程結束，重置回步驟 0
+                userProfile.allergy = text;
+                chatStep = 0; // 重置
 
-                // === 鴨鴨大腦 (簡易邏輯判斷) ===
-                
-                // 情境 A: 關節痛 (區分是否有蝦蟹過敏)
-                if (userProfile.symptom.includes("關節") || userProfile.symptom.includes("痛")) {
-                    if (userProfile.allergy.includes("蝦") || userProfile.allergy.includes("蟹") || userProfile.allergy.includes("海鮮")) {
-                        // 有過敏 -> 推 UC-II (非蝦蟹來源)
-                        response = "鴨鴨幫您分析好了！🦆<br><br>雖然一般常推薦葡萄糖胺，但因為您提到有**海鮮過敏**，為了安全，我強烈建議選擇 **UC-II (非變性二型膠原蛋白)**。<br><br>它是從雞胸軟骨萃取，不含蝦蟹過敏原，對長輩關節保養效果也很好！";
-                        recProductId = 2; // UC-II
-                        recReasonText = "⚠️ 避開過敏原的安全首選！";
+                // --- 智慧推薦邏輯 ---
+                const who = userProfile.who;
+                const sym = userProfile.symptom;
+
+                // 1. 嬰幼兒推薦
+                if (who.includes("嬰") || who.includes("寶")) {
+                    response = "寶寶的腸胃較敏感，推薦 **妙利散**，細粉好餵食，建立健康腸道！";
+                    recProductId = 1; 
+                    recReasonText = "專為嬰幼兒設計，安全溫和。";
+                }
+                // 2. 小孩推薦
+                else if (who.includes("小") || who.includes("童")) {
+                    response = "小朋友成長期需要均衡營養，推薦 **小兒利撒爾**，好吃又營養！";
+                    recProductId = 2;
+                    recReasonText = "兒童專用配方，補足成長所需。";
+                }
+                // 3. 男性推薦
+                else if (who.includes("男")) {
+                    response = "針對男性上班族，推薦 **B群+鋅**，增強體力與精神！";
+                    recProductId = 3;
+                    recReasonText = "加強鋅配方，男性首選。";
+                }
+                // 4. 女性推薦
+                else if (who.includes("女")) {
+                    response = "愛美的女性推薦 **膠原蛋白粉**，維持氣色紅潤！";
+                    recProductId = 4;
+                    recReasonText = "含鐵配方，專為女性設計。";
+                }
+                // 5. 老人/長輩 (針對關節)
+                else if (who.includes("老") || who.includes("長") || who.includes("嬤") || who.includes("公")) {
+                    if (userProfile.allergy.includes("蝦") || userProfile.allergy.includes("蟹")) {
+                        response = "因為有**蝦蟹過敏**，不建議吃葡萄糖胺。強烈推薦 **UC-II**，雞軟骨萃取，安全有效！";
+                        recProductId = 5;
+                        recReasonText = "⚠️ 避開過敏原的最佳選擇！";
                     } else {
-                        // 無過敏 -> 推 葡萄糖胺
-                        response = "針對長輩的關節保養，若是沒有特殊過敏，這款 **大樹葡萄糖胺飲** 液態好吸收，是很多長輩的回購首選喔！";
-                        recProductId = 1; // 葡萄糖胺
-                        recReasonText = "液態好吸收，經典熱銷款。";
+                        response = "長輩保養關鍵，推薦 **大樹深海魚油** 或葡萄糖胺，潤滑關鍵部位。";
+                        recProductId = 6;
+                        recReasonText = "高濃度 Omega-3，抗發炎保養。";
                     }
                 }
-                
-                // 情境 B: 肚子痛/腸胃 (區分是嬰兒還是成人)
-                else if (userProfile.symptom.includes("肚子") || userProfile.symptom.includes("拉肚子") || userProfile.symptom.includes("腸胃")) {
-                    if (userProfile.who.includes("嬰") || userProfile.who.includes("兒") || userProfile.who.includes("寶寶")) {
-                        // 嬰兒 -> 推 妙利散
-                        response = "寶寶的腸胃比較敏感，不能吃成人的藥喔！🦆<br><br>建議使用這款 **妙利散**，它是細粉狀好餵食，且菌株耐酸，能幫助寶寶建立健康的腸道環境。";
-                        recProductId = 3; // 嬰兒益生菌
-                        recReasonText = "專為嬰幼兒設計，細粉好吞嚥。";
-                    } else {
-                        // 成人 -> 推 若元錠
-                        response = "如果是成人消化不良或脹氣，推薦這款經典的 **若元錠 (Wakamoto)**，同時含有消化酵素與益生菌，能有效幫助消化。";
-                        recProductId = 4; // 若元錠
-                        recReasonText = "消化酵素+益生菌，雙效合一。";
-                    }
-                }
-                
-                // 預設回應
+                // 預設
                 else {
-                    response = "收到！根據您的需求，我整理了以下適合的熱門商品供您參考。建議服用前先諮詢門市藥師確認劑量喔！";
-                    recProductId = 5; // 綜合維他命
-                    recReasonText = "基礎營養補充，適合大多數人。";
+                    response = "根據您的需求，推薦這款熱銷商品！";
+                    recProductId = 7;
+                    recReasonText = "居家常備良藥。";
                 }
             }
 
@@ -363,54 +311,42 @@
 
             if (recProductId) {
                 const p = products.find(i => i.id === recProductId);
-                addRecCard(p, recReasonText);
+                if(p) addRecCard(p, recReasonText);
                 
-                // 網頁連動效果
-                document.querySelectorAll('.product-card').forEach(c => {
-                    c.style.border = "2px solid transparent";
-                    c.querySelector('.tag-rec').style.display = "none";
-                });
-                const targetCard = document.getElementById(`pid-${p.id}`);
-                if(targetCard){ // 確保商品卡還在畫面上
+                // 捲動效果
+                const targetCard = document.getElementById(`pid-${recProductId}`);
+                if(targetCard){
+                    document.querySelectorAll('.product-card').forEach(c => c.style.border = "2px solid transparent");
                     targetCard.style.border = "2px solid #F39800";
-                    targetCard.querySelector('.tag-rec').style.display = "block";
-                    setTimeout(() => {
-                         targetCard.scrollIntoView({behavior: "smooth", block: "center"});
-                    }, 500);
+                    setTimeout(() => targetCard.scrollIntoView({behavior: "smooth", block: "center"}), 500);
                 }
             }
 
-        }, 1000);
+        }, 800);
     }
 
     function addMessage(text, sender) {
         const chatBox = document.getElementById('chatMsg');
-        chatBox.innerHTML += `
-            <div class="msg msg-${sender}">
-                <div class="bubble">${text}</div>
-            </div>
-        `;
+        chatBox.innerHTML += `<div class="msg msg-${sender}"><div class="bubble">${text}</div></div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    ffunction addRecCard(product, reason) {
+    function addRecCard(product, reason) {
         const chatBox = document.getElementById('chatMsg');
         chatBox.innerHTML += `
             <div class="msg msg-duck">
-                <div class="rec-card" onclick="alert('（模擬）導引至商品頁面: ${product.name}')">
-                    
+                <div class="rec-card" onclick="alert('導引至商品頁: ${product.name}')">
                     <img src="${product.image}" alt="${product.name}">
-                    
                     <div class="rec-info">
                         <div class="rec-title">${product.name}</div>
                         <div class="rec-reason">${reason}</div>
-                        <div class="rec-action">點擊查看詳情 ></div>
+                        <div class="rec-action">點擊查看 ></div>
                     </div>
                 </div>
-            </div>
-        `;
+            </div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
+
     function showTyping(show) {
         document.getElementById('typingIndicator').style.display = show ? 'block' : 'none';
     }
