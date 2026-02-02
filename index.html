@@ -193,6 +193,8 @@
         { id: 7, name: "若元錠 Wakamoto", price: 600, tag: "腸胃消化", image: "https://placehold.co/150x150/ce93d8/333?text=Wakamoto", target: "adult", allergy: "none" },
          // 過敏替代
         { id: 8, name: "植物性 葡萄糖胺", price: 700, tag: "全素可食", image: "https://placehold.co/150x150/a5d6a7/333?text=Plant+Gluco", target: "senior", allergy: "none" }
+         // 睡眠
+        { id: 9, name: "三得利 芝麻明 E", price: 1600, tag: "睡眠輔助", image: "https://placehold.co/150x150/5c6bc0/fff?text=Sleep+GABA", target: "adult,senior", allergy: "none" }
     ];
 
     // 初始化商品列表
@@ -290,6 +292,11 @@
                     response = "愛美的女性推薦 **膠原蛋白粉**，維持氣色紅潤！";
                     recProductId = 4;
                     recReasonText = "含鐵配方，專為女性設計。";
+                }
+                    else if (sym.includes("睡") || sym.includes("失眠") || sym.includes("累")) {
+                    response = "最近睡眠品質不好嗎？🦆<br>推薦這款 **芝麻明 E**，含有天然芝麻素與維生素E，能幫助放鬆入睡，隔天精神更好喔！";
+                    recProductId = 9; // 對應上面的 ID: 9
+                    recReasonText = "幫助入睡，調節生理機能。";
                 }
                 // 5. 老人/長輩 (針對關節)
                 else if (who.includes("老") || who.includes("長") || who.includes("爺") || who.includes("奶") || who.includes("嬤") || who.includes("公")) {
